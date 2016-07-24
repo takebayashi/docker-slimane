@@ -20,9 +20,11 @@ RUN cd /tmp && \
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - && \
     apt-get install -y nodejs
 
-RUN npm install -g slimane-cli
+RUN npm install -g slimane-cli@0.1.6
 
 ONBUILD ADD . /app
 WORKDIR /app
 ONBUILD RUN rm -rf .build Packages && slimane build && rm -rf Packages
-CMD ["slimane", "run"]
+# workaround for slimane-cli 1.0.6 bugs
+ONBUILD RUN mv ./.build/debug ./.build/Debug
+CMD ["/usr/bin/slimane", "run"]
